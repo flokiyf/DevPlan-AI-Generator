@@ -3,12 +3,14 @@ import json
 from typing import Dict, Any
 import openai
 from models import ProjectRequest, ProjectSchema, Architecture, Roadmap, FileStructure, RecommendedStack, TechnologyRecommendation
+from config_service import config_service
 
 class SchemaGeneratorService:
     """Service pour générer des schémas de projets avec OpenAI"""
     
     def __init__(self):
-        self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        # Ne plus créer directement le client ici, utiliser le service de configuration
+        pass
         
     async def generate_schema(self, request: ProjectRequest) -> ProjectSchema:
         """Génère un schéma complet de projet"""
@@ -17,8 +19,11 @@ class SchemaGeneratorService:
         prompt = self._build_prompt(request)
         
         try:
+            # Utiliser le service de configuration pour obtenir le client
+            client = config_service.get_client()
+            
             # Appel à OpenAI
-            response = self.client.chat.completions.create(
+            response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": self._get_system_prompt()},

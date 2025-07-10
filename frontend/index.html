@@ -165,6 +165,88 @@
     <!-- Main Generator Section -->
     <section id="generator" class="py-16 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Configuration OpenAI Section -->
+            <div id="openai-config-section" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-6 mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="key" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Configuration OpenAI</h3>
+                            <p class="text-sm text-gray-600">Configurez votre clé API pour utiliser le générateur</p>
+                        </div>
+                    </div>
+                    <div id="openai-status-indicator" class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                        <span id="openai-status-text" class="text-sm text-gray-500">Non testé</span>
+                    </div>
+                </div>
+                
+                <div id="openai-config-form" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="openai-api-key" class="block text-sm font-medium text-gray-700 mb-2">
+                                Clé API OpenAI <span class="text-red-500">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="openai-api-key" 
+                                placeholder="sk-..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            >
+                            <p class="text-xs text-gray-500 mt-1">Votre clé sera stockée localement et sécurisée</p>
+                        </div>
+                        <div>
+                            <label for="openai-model" class="block text-sm font-medium text-gray-700 mb-2">
+                                Modèle OpenAI
+                            </label>
+                            <select id="openai-model" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="gpt-4">GPT-4 (Recommandé)</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button 
+                            type="button" 
+                            id="test-openai-config" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
+                        >
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                            Tester la configuration
+                        </button>
+                        <button 
+                            type="button" 
+                            id="save-openai-config" 
+                            class="border border-gray-300 hover:border-blue-300 text-gray-700 hover:text-blue-700 px-6 py-3 rounded-lg font-medium transition-colors"
+                            disabled
+                        >
+                            Sauvegarder
+                        </button>
+                    </div>
+                    
+                    <!-- Statut détaillé -->
+                    <div id="openai-config-details" class="hidden bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Organisation:</span>
+                                <span id="openai-org" class="text-gray-900">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Modèle disponible:</span>
+                                <span id="openai-model-available" class="text-gray-900">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Requêtes restantes:</span>
+                                <span id="openai-rate-limit" class="text-gray-900">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
                 <div class="text-center mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">Décrivez votre projet</h3>
@@ -397,6 +479,7 @@
 
     <!-- Scripts -->
     <script src="js/api.js"></script>
+    <script src="js/openai-config.js"></script>
     <script src="js/components.js"></script>
     <script src="js/main.js"></script>
 </body>
