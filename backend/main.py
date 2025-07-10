@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import openai
 from services import SchemaGeneratorService
 from models import ProjectRequest, ProjectResponse
+from config_service import config_service, OpenAIConfigRequest, OpenAIConfigResponse
 
 # Load environment variables
 load_dotenv()
@@ -50,17 +51,76 @@ async def root():
         }
     }
 
+@app.post("/api/config/openai", response_model=OpenAIConfigResponse)
+async def configure_openai(config: OpenAIConfigRequest):
+    """
+    Configure et valide la clé API OpenAI
+    
+    Args:
+        config: Configuration OpenAI (clé API, organisation, modèle)
+    
+    Returns:
+        OpenAIConfigResponse: Résultat de la validation
+    """
+    try:
+        result = await config_service.validate_openai_config(config)
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors de la configuration OpenAI: {str(e)}"
+        )
+
+@app.get("/api/config/openai/test", response_model=OpenAIConfigResponse)
+async def test_openai_config():
+    """
+    Teste la configuration OpenAI actuelle
+    
+    Returns:
+        OpenAIConfigResponse: État de la configuration
+    """
+    try:
+        result = await config_service.test_current_config()
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors du test de configuration: {str(e)}"
+        )
+
 @app.get("/health")
 async def health_check():
-    """Vérification de l'état de l'API"""
-    return {
-        "status": "healthy",
-        "timestamp": "2024-01-15T10:00:00Z",
-        "services": {
-            "openai": "connected" if os.getenv("OPENAI_API_KEY") else "disconnected",
-            "api": "running"
+    """Vérification de l'état de l'API avec test OpenAI amélioré"""
+    try:
+        # Tester la configuration OpenAI
+        openai_status = await config_service.test_current_config()
+        
+        return {
+            "status": "healthy",
+            "timestamp": "2024-01-15T10:00:00Z",
+            "services": {
+                "openai": {
+                    "status": openai_status.status,
+                    "configured": openai_status.is_valid,
+                    "model_available": openai_status.model_available,
+                    "message": openai_status.message
+                },
+                "api": "running"
+            }
         }
-    }
+    except Exception as e:
+        return {
+            "status": "degraded",
+            "timestamp": "2024-01-15T10:00:00Z",
+            "services": {
+                "openai": {
+                    "status": "error",
+                    "configured": False,
+                    "message": f"Erreur: {str(e)}"
+                },
+                "api": "running"
+            }
+        }
 
 @app.post("/api/generate-schema", response_model=ProjectResponse)
 async def generate_project_schema(request: ProjectRequest):

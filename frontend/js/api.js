@@ -67,6 +67,16 @@ class APIService {
     async healthCheck() {
         return this.get('/health');
     }
+
+    // OpenAI Configuration
+    async validateOpenAIConfig(configData) {
+        return this.post('/api/config/openai', configData);
+    }
+
+    // Test current OpenAI configuration
+    async testOpenAIConfig() {
+        return this.get('/api/config/openai/test');
+    }
 }
 
 // Create API instance
